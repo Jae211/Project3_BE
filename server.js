@@ -12,6 +12,7 @@ const db = mysql.createConnection({
 })
 
 app.use(cors());
+app.use(express.json());
 
 app.listen(port, function(req, res) {
 	console.log('server run: '+port);
@@ -20,3 +21,29 @@ app.listen(port, function(req, res) {
 app.post('/', function(req, res){
 	
 })
+
+/*
+ * 목적 : 로그인
+ * input : id, pw
+ * output : user에 대한 정보 / "아이디 또는 비밀번호가 틀렸습니다!"
+ */
+app.post('/login', function(req, res) {
+    const id = req.body.id;
+    const pw = req.body.pw;
+
+    db.query("SELECT * FROM user WHERE user_id = ? AND user_pwd = ?", 
+    [id, pw],
+    (err, result) => {
+        if(err){
+            console.log("login error");
+            res.send({err: err})
+        }
+        if(result.length > 0){
+            console.log("login succeed!");
+            res.send(result);
+        } else{
+            console.log("login fail");
+            res.send({message: "아이디 또는 비밀번호가 틀렸습니다!"});
+        }
+    });
+});
