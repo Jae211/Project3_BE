@@ -23,27 +23,28 @@ app.post('/', function(req, res){
 })
 
 /*
- * 목적 : 아이디 찾기
- * input : name, phone
- * output : user id / "아이디 정보가 존재하지 않습니다!"
+ * 목적 : 비밀번호 찾기
+ * input : id, name, phone
+ * output : user pw / "사용자 정보가 존재하지 않습니다!"
  */
-app.post('/findid', function(req, res) {
+app.post('/findpw', function(req, res) {
+    const id = req.body.id;
     const name = req.body.name;
     const phone = req.body.phone;
 
-    db.query("SELECT * FROM user WHERE user_name = ? AND user_phone = ?", 
-    [name, phone],
+    db.query("SELECT * FROM user WHERE user_id = ? AND user_name = ? AND user_phone = ?", 
+    [id, name, phone],
     (err, result) => {
         if(err){
-            console.log("findid error");
+            console.log("findpw error");
             res.send({err: err})
         }
         if(result.length > 0){
-            console.log("findid succeed!");            
+            console.log("findpw succeed!");            
             res.send(result);
         } else{
-            console.log("findid fail");
-            res.send({message: "아이디 정보가 존재하지 않습니다!"});
+            console.log("findpw fail");
+            res.send({message: "사용자 정보가 존재하지 않습니다!"});
         }
     });
 });
