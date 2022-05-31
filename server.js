@@ -92,7 +92,7 @@ app.post('/nickoverlap', function(req, res) {
         }
         if(result.length > 0){
             console.log("nickoverlap succeed!");            
-            res.send({message: "이미 존재하는 닉네임입니다!"});
+            res.send(result);
         } else{
             console.log("nickoverlap fail");
             res.send();
