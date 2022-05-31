@@ -23,85 +23,57 @@ app.post('/', function(req, res){
 })
 
 /*
- * 목적 : 회원가입
- * input : id, name, date, nickname, pw, phone, location
- * output : user 정보 / null
- */
-app.post('/register', function(req, res) {
-    const id = req.body.id;
-    const name = req.body.name;
-    const date = req.body.date;
-    const nickname = req.body.nickname;
-    const pw = req.body.pw;
-    const phone = req.body.phone;
-    const location = req.body.location;
-
-    console.log("info : "+id+"\n"+name+"\n"+date+"\n"+nickname+"\n"+pw+"\n"+phone+"\n"+location);
-
-    db.query("INSERT INTO USER (user_id, user_name, join_date, user_nickname, user_pwd, user_phone, user_location) VALUES (?,?,?,?,?,?,?)", 
-    [id, name, date, nickname, pw, phone, location],
-    (err, result) => {
-        if(err){
-            console.log("register error");
-            res.send({message: "실패"});
-        }
-        if(result){
-            console.log("register succeed!");
-            res.send({message: "성공"});
-        }
-    });
-});
-
-/*
- * 목적 : id 중복 확인
+ * 목적 : 내 정보 불러오기
  * input : id
  * output : user 정보 / null
  */
-app.post('/idoverlap', function(req, res) {
+app.post('/getmyinfo', function(req, res) {
     const id = req.body.id;
 
     db.query("SELECT * FROM user WHERE user_id = ?", 
     [id],
     (err, result) => {
         if(err){
-            console.log("idoverlap error");
+            console.log("getmyinfo error");
             res.send({err: err})
         }
         if(result.length > 0){
-            console.log("idoverlap succeed!");            
+            console.log("getmyinfo succeed!");            
             res.send(result);
         } else{
-            console.log("idoverlap fail");
-            res.send();
+            console.log("getmyinfo fail");
+            res.send({message: "정보가 존재하지 않습니다!"});
         }
     });
 });
 
 
 /*
- * 목적 : phone 중복 확인
- * input : phone
+ * 목적 : 내 정보 변경하기
+ * input : id
  * output : user 정보 / null
  */
-app.post('/phoneoverlap', function(req, res) {
-    const phone = req.body.phone;
-
-    db.query("SELECT * FROM user WHERE user_phone = ?", 
-    [phone],
+app.post('/changemyinfo', function(req, res) {
+    const id = req.body.id;
+    const pw = req.body.pw;
+    const nickname = req.body.nickname;
+    const location = req.body.location;
+    
+    db.query("UPDATE user SET user_pwd = ?, user_nickname = ?, user_location = ? WHERE user_id = ?",
+    [pw, nickname, location, id],
     (err, result) => {
         if(err){
-            console.log("phoneoverlap error");
-            res.send({err: err})
+            console.log("changemyinfo error");
+            res.send({message: "실패"});
         }
-        if(result.length > 0){
-            console.log("phoneoverlap succeed!");            
-            res.send(result);
-        } else{
-            console.log("phoneoverlap fail");
-            res.send();
+        if(result){
+            console.log("changemyinfo succeed!");
+            res.send({message: "성공"});
         }
     });
 });
+
+
 
 /*
  * 목적 : nickname 중복 확인
@@ -120,11 +92,10 @@ app.post('/nickoverlap', function(req, res) {
         }
         if(result.length > 0){
             console.log("nickoverlap succeed!");            
-            res.send(result);
+            res.send({message: "이미 존재하는 닉네임입니다!"});
         } else{
             console.log("nickoverlap fail");
             res.send();
         }
     });
 });
-
